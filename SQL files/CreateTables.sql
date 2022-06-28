@@ -6,9 +6,9 @@
 
 CREATE TABLE Candidate_List
 (
-	ID				INT				PRIMARY KEY,
-	Candidate_SSN	CHAR(10)		NOT NULL,
-	Vote_ID			INT				NOT NULL,
+	ID				INT						PRIMARY KEY			IDENTITY(1,1),
+	Candidate_SSN	CHAR(10)				NOT NULL,
+	Vote_ID			INT						NOT NULL,
 	UNIQUE (Candidate_SSn, Vote_ID),
 	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate(SSN)
 		ON DELETE CASCADE,
@@ -19,12 +19,12 @@ CREATE TABLE Candidate_List
 -- add a check to check only one of is_frist_rd and is_second_rd, are set true. --> done
 CREATE TABLE Vote
 (
-	ID				INT					PRIMARY KEY,
-	Voter_SSN		CHAR(10)			NOT NULL,
-	PS_ID			INT					NOT NULL,
-	VoteDate		DATETIME2(0)		NOT NULL,
-	is_Fist_RD		BIT					NOT NULL,
-	is_Second_RD	BIT					NOT NULL,
+	ID				INT						PRIMARY KEY			IDENTITY(1,1),
+	Voter_SSN		CHAR(10)				NOT NULL,
+	PS_ID			INT						NOT NULL,
+	VoteDate		DATETIME2(0)			NOT NULL,
+	is_Fist_RD		BIT						NOT NULL,
+	is_Second_RD	BIT						NOT NULL,
 	UNIQUE (Voter_SSN, PS_ID), -- check if it is necessary to contain ID or not.
 	FOREIGN KEY (Voter_SSN) REFERENCES Candidate(SSN)
 		ON DELETE CASCADE,
@@ -39,7 +39,7 @@ ALTER TABLE Vote
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Vote table.
 CREATE TABLE Polling_Station
 (
-	ID					INT					PRIMARY KEY,
+	ID					INT					PRIMARY KEY			IDENTITY(1,1),
 	C_Name				VARCHAR(50)			NOT NULL,
 	[Address]			VARCHAR(max)		NOT NULL,
 	F_Votes_no			INT,
@@ -115,7 +115,7 @@ ALTER TABLE Candidate
 
 CREATE TABLE Degree
 (
-	ID					INT					PRIMARY KEY,
+	ID					INT					PRIMARY KEY			IDENTITY(1,1),
 	Degree_Name			VARCHAR(50)			NOT NULL,
 	Candidate_SSN		CHAR(10)			NOT NULL,
 	UNIQUE(Degree_Name, Candidate_SSN),
