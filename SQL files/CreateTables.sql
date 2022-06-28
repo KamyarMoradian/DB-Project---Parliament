@@ -4,6 +4,12 @@
 USE Parlimant
 GO
 
+IF OBJECT_ID('tr_DeleteCandidateList_OnDeleteVote') IS NOT NULL
+	DROP TRIGGER dbo.tr_DeleteCandidateList_OnDeleteVote;
+GO
+IF OBJECT_ID('tr_DeleteCandidateList_OnDeleteCandidate') IS NOT NULL
+	DROP TRIGGER dbo.tr_DeleteCandidateList_OnDeleteCandidate;
+GO
 IF OBJECT_ID('Candidate_List') IS NOT NULL
 	DROP TABLE Candidate_List;
 GO
@@ -33,10 +39,11 @@ GO
 -- add constraint to check voter_population to be more than 100000 --> done
 CREATE TABLE Province
 (
-	Province_Name		VARCHAR(50)			PRIMARY KEY,
-	Voter_Population	INT					NOT NULL,
-	F_Votes_no			INT					DEFAULT(0),
-	S_Votes_no			INT					DEFAULT(0)
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	Province_Name			VARCHAR(50)				NOT NULL			UNIQUE,
+	Voter_Population		INT						NOT NULL,
+	F_Votes_no				INT						DEFAULT(0),
+	S_Votes_no				INT						DEFAULT(0)
 );
 Go
 
@@ -47,34 +54,34 @@ GO
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Polling_station table.
 CREATE TABLE Constituency
 (
-	C_Name				VARCHAR(50)			PRIMARY KEY,
-	Province_Name		VARCHAR(50)			NOT NULL,
-	Center				VARCHAR(50)			NOT NULL,
-	F_Votes_no			INT					DEFAULT(0),
-	S_Votes_no			INT					DEFAULT(0),
-	Elected_no			INT					NOT NULL,
-	FOREIGN KEY (Province_Name) REFERENCES Province(Province_Name)
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	C_Name					VARCHAR(50)				NOT NULL			UNIQUE,
+	P_ID					INT						NOT NULL,
+	Center					VARCHAR(50)				NOT NULL,
+	F_Votes_no				INT						DEFAULT(0),
+	S_Votes_no				INT						DEFAULT(0),
+	Elected_no				INT						NOT NULL,
+	FOREIGN KEY (P_ID) REFERENCES Province(ID)
 		ON DELETE CASCADE
 );
 GO
 
--- deleted city_village attribute. because it can be inside Address.
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Vote table.
 CREATE TABLE Polling_Station
 (
-	ID					INT					PRIMARY KEY			IDENTITY(1,1),
-	C_Name				VARCHAR(50)			NOT NULL,
-	[Address]			VARCHAR(max)		NOT NULL,
-	F_Votes_no			INT,
-	S_Votes_no			INT,
-	FOREIGN KEY (C_Name) REFERENCES Constituency(C_Name)
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	C_ID					INT						NOT NULL,
+	[Address]				VARCHAR(max)			NOT NULL,
+	F_Votes_no				INT,
+	S_Votes_no				INT,
+	FOREIGN KEY (C_ID) REFERENCES Constituency(ID)
 		ON DELETE CASCADE
 );
 GO
 
 -- religion --> check to be chosen among a number of verified religions(Islam, Christianity, Judaism, Zoroastrianism) --> done
 -- sex --> check to be chosen from M and F --> done
--- political_fiction --> check not to have the invalid data (Eslah Talab, Osoul Gara, Aghaliat Dini, Independent).
+-- political_fiction --> check not to have the invalid data (Eslah Talab, Osoul Gara, Aghaliat Dini, Independent). --> done
 
 -- changes:
 -- religion --> make it char(1) --> done
@@ -84,21 +91,22 @@ GO
 
 CREATE TABLE Candidate
 (
-	SSN					CHAR(10)			PRIMARY KEY,
-	C_Name				VARCHAR(50)			NOT NULL,
-	First_Name			VARCHAR(50)			NOT NULL,
-	Last_Name			VARCHAR(50)			NOT NULL,
-	Birth_Date			DATETIME2(0)		NOT NULL,
-	ProfileImage		VARCHAR(max),
-	Sex					CHAR(1)				NOT NULL, 
-	Religion			VARCHAR(50)			NOT NULL,
-	is_Married			BIT					NOT NULL,
-	Nationality			VARCHAR(50)			NOT NULL,
-	F_Votes_no			INT					DEFAULT(0),
-	S_votes_no			INT					DEFAULT(0),
-	Political_Faction	VARCHAR(50)			NOT NULL,
-	Resume_Desc			VARCHAR(max)		NOT NULL,
-	FOREIGN KEY (C_Name) REFERENCES Constituency (C_Name)
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	SSN						CHAR(10)				NOT NULL			UNIQUE,
+	C_ID					INT						NOT NULL,
+	First_Name				VARCHAR(50)				NOT NULL,
+	Last_Name				VARCHAR(50)				NOT NULL,
+	Birth_Date				DATETIME2(0)			NOT NULL,
+	ProfileImage			VARCHAR(max),
+	Sex						CHAR(1)					NOT NULL, 
+	Religion				VARCHAR(50)				NOT NULL,
+	is_Married				BIT						NOT NULL,
+	Nationality				VARCHAR(50)				NOT NULL,
+	F_Votes_no				INT						DEFAULT(0),
+	S_votes_no				INT						DEFAULT(0),
+	Political_Faction		VARCHAR(50)				NOT NULL,
+	Resume_Desc				VARCHAR(max)			NOT NULL,
+	FOREIGN KEY (C_ID) REFERENCES Constituency (ID)
 		ON DELETE CASCADE,
 	CONSTRAINT Check_CandidateSex CHECK (SEX IN ('M', 'F')),
 	CONSTRAINT Check_CandidateSSN CHECK (ISNUMERIC(SSN) = 1),
@@ -126,14 +134,14 @@ GO
 
 -- Just one of the has_f_Rd_vote and has_s_rd_vote shold be set as true. --> done
 -- check sex to be chosen from M and F --> done
--- changed name of voter_ssn to ssn.
 CREATE TABLE Voter
 (
-	SSN					CHAR(10)			PRIMARY KEY,
-	Sex					CHAR(1)				NOT NULL, 
-	Age					INT					NOT NULL,
-	Has_F_RD_Vote		BIT					NOT NULL,
-	Has_S_RD_Vote		BIT					NOT NULL,
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	SSN						CHAR(10)				NOT NULL			UNIQUE,
+	Sex						CHAR(1)					NOT NULL, 
+	Age						INT						NOT NULL,
+	Has_F_RD_Vote			BIT						NOT NULL,
+	Has_S_RD_Vote			BIT						NOT NULL,
 	CONSTRAINT Check_VoterSex CHECK (SEX IN ('M', 'F')),
 	CONSTRAINT Check_VoterSSN CHECK (ISNUMERIC(SSN) = 1)
 );
@@ -147,14 +155,14 @@ Go
 -- add a check to check only one of is_frist_rd and is_second_rd, are set true. --> done
 CREATE TABLE Vote
 (
-	ID				INT						PRIMARY KEY			IDENTITY(1,1),
-	Voter_SSN		CHAR(10)				NOT NULL,
-	PS_ID			INT						NOT NULL,
-	VoteDate		DATETIME2(0)			NOT NULL,
-	is_First_RD		BIT						NOT NULL,
-	is_Second_RD	BIT						NOT NULL,
-	UNIQUE (Voter_SSN, PS_ID), -- check if it is necessary to contain ID or not.
-	FOREIGN KEY (Voter_SSN) REFERENCES Voter(SSN)
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	Voter_ID				INT						NOT NULL,
+	PS_ID					INT						NOT NULL,
+	VoteDate				DATETIME2(0)			NOT NULL,
+	is_First_RD				BIT						NOT NULL,
+	is_Second_RD			BIT						NOT NULL,
+	UNIQUE (Voter_ID, PS_ID), -- check if it is necessary to contain ID or not.
+	FOREIGN KEY (Voter_ID) REFERENCES Voter(ID)
 		ON DELETE CASCADE,
 	FOREIGN KEY (PS_ID) REFERENCES Polling_Station(ID)
 		ON DELETE CASCADE
@@ -167,22 +175,22 @@ GO
 
 CREATE TABLE Degree
 (
-	ID					INT					PRIMARY KEY			IDENTITY(1,1),
-	Degree_Name			VARCHAR(50)			NOT NULL,
-	Candidate_SSN		CHAR(10)			NOT NULL,
-	UNIQUE(Degree_Name, Candidate_SSN),
-	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate (SSN)
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	Degree_Name				VARCHAR(50)				NOT NULL,
+	Candidate_ID			INT						NOT NULL,
+	UNIQUE(Degree_Name, Candidate_ID),
+	FOREIGN KEY (Candidate_ID) REFERENCES Candidate (ID)
 		ON DELETE CASCADE
 );
 GO
 
 CREATE TABLE Candidate_List
 (
-	ID				INT						PRIMARY KEY			IDENTITY(1,1),
-	Candidate_SSN	CHAR(10)				NOT NULL,
-	Vote_ID			INT						NOT NULL,
-	UNIQUE (Candidate_SSn, Vote_ID),
-	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate(SSN),
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	Candidate_ID			INT						NOT NULL,
+	Vote_ID					INT						NOT NULL,
+	UNIQUE (Candidate_ID, Vote_ID),
+	FOREIGN KEY (Candidate_ID) REFERENCES Candidate(ID),
 	FOREIGN KEY (Vote_ID) REFERENCES Vote(ID)
 );
 GO
