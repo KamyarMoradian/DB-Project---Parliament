@@ -84,6 +84,7 @@ CREATE TABLE Polling_Station
 (
 	ID						INT						PRIMARY KEY			IDENTITY(1,1),
 	C_ID					INT						NOT NULL,
+	City					VARCHAR(50)				NOT NULL,
 	[Address]				VARCHAR(max)			NOT NULL,
 	F_Votes_no				INT,
 	S_Votes_no				INT,
@@ -231,6 +232,7 @@ CREATE TABLE Voided_PollingStation
 (
 	ID						INT						PRIMARY KEY,
 	CO_ID					INT						NOT NULL,
+	City					VARCHAR(50)				NOT NULL,
 	[Address]				VARCHAR(max)			NOT NULL,
 	F_Votes_no				INT,
 	S_Votes_no				INT
