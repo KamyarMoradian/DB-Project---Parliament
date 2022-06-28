@@ -19,6 +19,6 @@ BEGIN
 	FROM Candidate_List AS CL
 	WHERE EXISTS ( SELECT *	
 				   FROM deleted
-				   WHERE deleted.SSN = CL.Candidate_SSN )
+				   WHERE deleted.ID = CL.Candidate_ID )
 END
 GO

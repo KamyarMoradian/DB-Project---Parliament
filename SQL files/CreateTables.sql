@@ -34,6 +34,13 @@ GO
 IF OBJECT_ID('Province') IS NOT NULL
 	DROP TABLE Province;
 GO
+IF OBJECT_ID('Deleted_Candidates') IS NOT NULL
+	DROP TABLE Deleted_Candidates;
+GO
+IF OBJECT_ID('Deleted_PollingStations') IS NOT NULL
+	DROP TABLE Deleted_PollingStations;
+GO
+
 
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Constituency table.
 -- add constraint to check voter_population to be more than 100000 --> done
@@ -48,7 +55,7 @@ CREATE TABLE Province
 Go
 
 ALTER TABLE Province
-	ADD CONSTRAINT CheckProvincePopulation CHECK (Voter_Population >= 100000);
+	ADD CONSTRAINT ckProvincePopulation CHECK (Voter_Population >= 100000);
 GO
 
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Polling_station table.
@@ -93,7 +100,7 @@ CREATE TABLE Candidate
 (
 	ID						INT						PRIMARY KEY			IDENTITY(1,1),
 	SSN						CHAR(10)				NOT NULL			UNIQUE,
-	C_ID					INT						NOT NULL,
+	CO_ID					INT						NOT NULL,
 	First_Name				VARCHAR(50)				NOT NULL,
 	Last_Name				VARCHAR(50)				NOT NULL,
 	Birth_Date				DATETIME2(0)			NOT NULL,
@@ -106,29 +113,29 @@ CREATE TABLE Candidate
 	S_votes_no				INT						DEFAULT(0),
 	Political_Faction		VARCHAR(50)				NOT NULL,
 	Resume_Desc				VARCHAR(max)			NOT NULL,
-	FOREIGN KEY (C_ID) REFERENCES Constituency (ID)
+	FOREIGN KEY (CO_ID) REFERENCES Constituency (ID)
 		ON DELETE CASCADE,
-	CONSTRAINT Check_CandidateSex CHECK (SEX IN ('M', 'F')),
-	CONSTRAINT Check_CandidateSSN CHECK (ISNUMERIC(SSN) = 1),
-	CONSTRAINT Check_CandidateReligion CHECK (Religion IN ('Islam', 'Christianity', 'Judaism', 'Zoroastrianism')),
-	CONSTRAINT Check_CandidatePF CHECK (Political_Faction IN ('Eslah Talab', 'Osoul Gara', 'Aghaliat Dini', 'Independent'))
+	CONSTRAINT ck_CandidateSex CHECK (SEX IN ('M', 'F')),
+	CONSTRAINT ck_CandidateSSN CHECK (ISNUMERIC(SSN) = 1),
+	CONSTRAINT ck_CandidateReligion CHECK (Religion IN ('Islam', 'Christianity', 'Judaism', 'Zoroastrianism')),
+	CONSTRAINT ck_CandidatePF CHECK (Political_Faction IN ('Eslah Talab', 'Osoul Gara', 'Aghaliat Dini', 'Independent'))
 );
 GO
 
 ALTER TABLE Candidate
-	DROP CONSTRAINT Check_CandidateReligion;
+	DROP CONSTRAINT ck_CandidateReligion;
 ALTER TABLE Candidate
 	ALTER COLUMN Religion CHAR(1) NOT NULL;
 ALTER TABLE Candidate
-	ADD CONSTRAINT Check_CandidateReligion CHECK (Religion IN ('I', 'C', 'J', 'Z'));
+	ADD CONSTRAINT ck_CandidateReligion CHECK (Religion IN ('I', 'C', 'J', 'Z'));
 Go
 
 ALTER TABLE Candidate
-	DROP CONSTRAINT Check_CandidatePF;
+	DROP CONSTRAINT ck_CandidatePF;
 ALTER TABLE Candidate
 	ALTER COLUMN Political_Faction CHAR(1) NOT NULL;
 ALTER TABLE Candidate
-	ADD CONSTRAINT Check_CandidatePF CHECK (Political_Faction IN ('E', 'O', 'A', 'I'));
+	ADD CONSTRAINT ck_CandidatePF CHECK (Political_Faction IN ('E', 'O', 'A', 'I'));
 GO
 
 
@@ -142,13 +149,13 @@ CREATE TABLE Voter
 	Age						INT						NOT NULL,
 	Has_F_RD_Vote			BIT						NOT NULL,
 	Has_S_RD_Vote			BIT						NOT NULL,
-	CONSTRAINT Check_VoterSex CHECK (SEX IN ('M', 'F')),
-	CONSTRAINT Check_VoterSSN CHECK (ISNUMERIC(SSN) = 1)
+	CONSTRAINT ck_VoterSex CHECK (SEX IN ('M', 'F')),
+	CONSTRAINT ck_VoterSSN CHECK (ISNUMERIC(SSN) = 1)
 );
 GO
 
 ALTER TABLE Voter
-	ADD CONSTRAINT Check_hasVoteRD CHECK ((Has_F_RD_Vote = 1 AND Has_S_RD_Vote = 0) OR (Has_F_RD_Vote = 0 AND Has_S_RD_Vote = 1))
+	ADD CONSTRAINT ck_hasVoteRD CHECK ((Has_F_RD_Vote = 1 AND Has_S_RD_Vote = 0) OR (Has_F_RD_Vote = 0 AND Has_S_RD_Vote = 1))
 Go
 
 
@@ -170,7 +177,7 @@ CREATE TABLE Vote
 GO
 
 ALTER TABLE Vote
-	ADD CONSTRAINT Check_voteRD CHECK ((is_First_RD = 1 AND is_second_RD = 0) OR (is_First_RD = 0 AND is_Second_RD = 1))
+	ADD CONSTRAINT ck_voteRD CHECK ((is_First_RD = 1 AND is_second_RD = 0) OR (is_First_RD = 0 AND is_Second_RD = 1))
 GO
 
 CREATE TABLE Degree
@@ -194,3 +201,35 @@ CREATE TABLE Candidate_List
 	FOREIGN KEY (Vote_ID) REFERENCES Vote(ID)
 );
 GO
+
+CREATE TABLE Deleted_Candidates
+(
+	ID						INT						PRIMARY KEY,
+	SSN						CHAR(10)				NOT NULL,
+	CO_ID					INT						NOT NULL,
+	First_Name				VARCHAR(50)				NOT NULL,
+	Last_Name				VARCHAR(50)				NOT NULL,
+	Birth_Date				DATETIME2(0)			NOT NULL,
+	ProfileImage			VARCHAR(max),
+	Sex						CHAR(1)					NOT NULL, 
+	Religion				VARCHAR(50)				NOT NULL,
+	is_Married				BIT						NOT NULL,
+	Nationality				VARCHAR(50)				NOT NULL,
+	F_Votes_no				INT						DEFAULT(0),
+	S_votes_no				INT						DEFAULT(0),
+	Political_Faction		VARCHAR(50)				NOT NULL,
+	Resume_Desc				VARCHAR(max)			NOT NULL,
+	Delete_Reason			CHAR(4)					NOT NULL,
+	CONSTRAINT ck_C_DeleteReason CHECK (Delete_Reason IN ('QUAL', 'QUIT'))
+);
+
+CREATE TABLE Deleted_PollingStations
+(
+	ID						INT						PRIMARY KEY,
+	CO_ID					INT						NOT NULL,
+	[Address]				VARCHAR(max)			NOT NULL,
+	F_Votes_no				INT,
+	S_Votes_no				INT,
+	Delete_Reason			CHAR(4)					NOT NULL,
+	CONSTRAINT ck_PS_DeleteReason CHECK (Delete_Reason IN ('QUAL', 'QUIT'))
+);
