@@ -157,7 +157,8 @@ CREATE TABLE Voter
 	Has_F_RD_Vote			BIT						NOT NULL,
 	Has_S_RD_Vote			BIT						NOT NULL,
 	CONSTRAINT ck_VoterSex CHECK (SEX IN ('M', 'F')),
-	CONSTRAINT ck_VoterSSN CHECK (ISNUMERIC(SSN) = 1)
+	CONSTRAINT ck_VoterSSN CHECK (ISNUMERIC(SSN) = 1),
+	CONSTRAINT ck_VoterAge CHECK (Age >= 18)
 );
 GO
 
