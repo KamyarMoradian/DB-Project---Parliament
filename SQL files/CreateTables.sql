@@ -41,7 +41,7 @@ CREATE TABLE Province
 Go
 
 ALTER TABLE Province
-	ADD CONSTRAINT CheckProvincePopulation CHECK (Voter_Population > 100000);
+	ADD CONSTRAINT CheckProvincePopulation CHECK (Voter_Population >= 100000);
 GO
 
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Polling_station table.
@@ -57,7 +57,6 @@ CREATE TABLE Constituency
 		ON DELETE CASCADE
 );
 GO
-
 
 -- deleted city_village attribute. because it can be inside Address.
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Vote table.
@@ -183,9 +182,7 @@ CREATE TABLE Candidate_List
 	Candidate_SSN	CHAR(10)				NOT NULL,
 	Vote_ID			INT						NOT NULL,
 	UNIQUE (Candidate_SSn, Vote_ID),
-	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate(SSN)
-		ON DELETE CASCADE,
+	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate(SSN),
 	FOREIGN KEY (Vote_ID) REFERENCES Vote(ID)
-		ON DELETE CASCADE
 );
 GO
