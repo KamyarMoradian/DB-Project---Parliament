@@ -16,7 +16,7 @@ CREATE TABLE Candidate_List
 		ON DELETE CASCADE
 );
 
--- add a check to check only one of is_frist_rd and is_second_rd, are set true.
+-- add a check to check only one of is_frist_rd and is_second_rd, are set true. --> done
 CREATE TABLE Vote
 (
 	ID				INT					PRIMARY KEY,
@@ -30,11 +30,13 @@ CREATE TABLE Vote
 		ON DELETE CASCADE,
 	FOREIGN KEY (PS_ID) REFERENCES Polling_Station(ID)
 		ON DELETE CASCADE
-
 );
 
+ALTER TABLE Vote
+	ADD CONSTRAINT Check_voteRD CHECK ((is_First_RD = 1 AND is_second_RD = 0) OR (is_First_RD = 0 AND is_Second_RD = 1))
+
 -- deleted city_village attribute. because it can be inside Address.
--- F_Vites_no and S_votes_no, should be evalued using trigger on Vote table.
+-- F_Votes_no and S_votes_no, should be evalued using trigger on Vote table.
 CREATE TABLE Polling_Station
 (
 	ID					INT					PRIMARY KEY,
@@ -46,20 +48,33 @@ CREATE TABLE Polling_Station
 		ON DELETE CASCADE
 );
 
--- Just one of the has_f_Rd_vote and has_s_rd_vote shold be set as true.
+-- Just one of the has_f_Rd_vote and has_s_rd_vote shold be set as true. --> done
+-- check sex to be chosen from M and F --> done
 -- changed name of voter_ssn to ssn.
 CREATE TABLE Voter
 (
 	SSN					CHAR(10)			PRIMARY KEY,
-	Sex					CHAR(1)				NOT NULL, -- check to be chosen from M and F
+	Sex					CHAR(1)				NOT NULL, 
 	Age					INT					NOT NULL,
 	Has_F_RD_Vote		BIT					NOT NULL,
 	Has_S_RD_Vote		BIT					NOT NULL,
+	CONSTRAINT Check_VoterSex CHECK (SEX IN ('M', 'F')),
+	CONSTRAINT Check_VoterSSN CHECK (ISNUMERIC(SSN) = 1)
 );
 
--- religion --> check to be chosen among a number of verified religions
--- sex --> check to be chosen from M and F
--- political_fiction --> check not to have the invalid data.
+ALTER TABLE Voter
+	ADD CONSTRAINT Check_hasVoteRD CHECK ((Has_F_RD_Vote = 1 AND Has_S_RD_Vote = 0) OR (Has_F_RD_Vote = 0 AND Has_S_RD_Vote = 1))
+
+-- religion --> check to be chosen among a number of verified religions(Islam, Christianity, Judaism, Zoroastrianism) --> done
+-- sex --> check to be chosen from M and F --> done
+-- political_fiction --> check not to have the invalid data (Eslah Talab, Osoul Gara, Aghaliat Dini, Independent).
+
+-- changes:
+-- religion --> make it char(1) --> done
+-- religion --> check to be chosen among a number of verified religions(I, C, J, Z) --> done
+-- political_fiction --> make it char(1) --> done
+-- political_fiction --> change chec constraint to just have data in (E, O, A, I) --> done
+
 CREATE TABLE Candidate
 (
 	SSN					CHAR(10)			PRIMARY KEY,
@@ -77,8 +92,26 @@ CREATE TABLE Candidate
 	Political_Faction	VARCHAR(50)			NOT NULL,
 	Resume_Desc			VARCHAR(max)		NOT NULL,
 	FOREIGN KEY (C_Name) REFERENCES Constituency (C_Name)
-		ON DELETE CASCADE
+		ON DELETE CASCADE,
+	CONSTRAINT Check_CandidateSex CHECK (SEX IN ('M', 'F')),
+	CONSTRAINT Check_CandidateSSN CHECK (ISNUMERIC(SSN) = 1),
+	CONSTRAINT Check_CandidateReligion CHECK (Religion IN ('Islam', 'Christianity', 'Judaism', 'Zoroastrianism')),
+	CONSTRAINT Check_CandidatePF CHECK (Political_Faction IN ('Eslah Talab', 'Osoul Gara', 'Aghaliat Dini', 'Independent'))
 );
+
+ALTER TABLE Candidate
+	ALTER COLUMN Religion CHAR(1) NOT NULL;
+ALTER TABLE Candidate
+	DROP CONSTRAINT Check_CandidateReligion;
+ALTER TABLE Candidate
+	ADD CONSTRAINT Check_CandidateReligion CHECK (Religion IN ('I', 'C', 'J', 'Z'));
+
+ALTER TABLE Candidate
+	ALTER COLUMN Political_Faction CHAR(1) NOT NULL;
+ALTER TABLE Candidate
+	DROP CONSTRAINT Check_CandidatePF;
+ALTER TABLE Candidate
+	ADD CONSTRAINT Check_CandidatePF CHECK (Political_Faction IN ('E', 'O', 'A', 'I'));
 
 CREATE TABLE Degree
 (
@@ -104,6 +137,7 @@ CREATE TABLE Constituency
 );
 
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Constituency table.
+-- add constraint to check voter_population to be more than 100000 --> done
 CREATE TABLE Province
 (
 	Province_Name		VARCHAR(50)			PRIMARY KEY,
@@ -111,3 +145,6 @@ CREATE TABLE Province
 	F_Votes_no			INT					DEFAULT(0),
 	S_Votes_no			INT					DEFAULT(0)
 );
+
+ALTER TABLE Province
+	ADD CONSTRAINT CheckProvincePopulation CHECK (Voter_Population > 100000);
