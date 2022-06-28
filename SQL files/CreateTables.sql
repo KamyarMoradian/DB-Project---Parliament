@@ -1,5 +1,5 @@
---CREATE DATABASE Parlimant
---GO
+CREATE DATABASE Parlimant
+GO
 
 --USE Parlimant
 --GO
@@ -23,10 +23,10 @@ CREATE TABLE Vote
 	Voter_SSN		CHAR(10)				NOT NULL,
 	PS_ID			INT						NOT NULL,
 	VoteDate		DATETIME2(0)			NOT NULL,
-	is_Fist_RD		BIT						NOT NULL,
+	is_First_RD		BIT						NOT NULL,
 	is_Second_RD	BIT						NOT NULL,
 	UNIQUE (Voter_SSN, PS_ID), -- check if it is necessary to contain ID or not.
-	FOREIGN KEY (Voter_SSN) REFERENCES Candidate(SSN)
+	FOREIGN KEY (Voter_SSN) REFERENCES Voter(SSN)
 		ON DELETE CASCADE,
 	FOREIGN KEY (PS_ID) REFERENCES Polling_Station(ID)
 		ON DELETE CASCADE
@@ -100,16 +100,16 @@ CREATE TABLE Candidate
 );
 
 ALTER TABLE Candidate
-	ALTER COLUMN Religion CHAR(1) NOT NULL;
-ALTER TABLE Candidate
 	DROP CONSTRAINT Check_CandidateReligion;
+ALTER TABLE Candidate
+	ALTER COLUMN Religion CHAR(1) NOT NULL;
 ALTER TABLE Candidate
 	ADD CONSTRAINT Check_CandidateReligion CHECK (Religion IN ('I', 'C', 'J', 'Z'));
 
 ALTER TABLE Candidate
-	ALTER COLUMN Political_Faction CHAR(1) NOT NULL;
-ALTER TABLE Candidate
 	DROP CONSTRAINT Check_CandidatePF;
+ALTER TABLE Candidate
+	ALTER COLUMN Political_Faction CHAR(1) NOT NULL;
 ALTER TABLE Candidate
 	ADD CONSTRAINT Check_CandidatePF CHECK (Political_Faction IN ('E', 'O', 'A', 'I'));
 
