@@ -145,6 +145,10 @@ ALTER TABLE Candidate
 	ADD CONSTRAINT ck_CandidatePF CHECK (Political_Faction IN ('E', 'O', 'A', 'I'));
 GO
 
+ALTER TABLE Candidate
+	ADD CONSTRAINT ck_CandidateAge CHECK (CheckCandidateAge(Birth_Date) = 1);
+--ALTER TABLE Candidate
+--	ADD CONSTRAINT ck_CandidateNationality CHECK (Nationality = 'Iran');
 
 -- Just one of the has_f_Rd_vote and has_s_rd_vote shold be set as true. --> done
 -- check sex to be chosen from M and F --> done
