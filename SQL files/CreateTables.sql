@@ -1,8 +1,8 @@
 --CREATE DATABASE Parlimant
 --GO
 
-USE Parlimant
-GO
+--USE Parlimant
+--GO
 
 CREATE TABLE Candidate_List
 (
@@ -10,11 +10,13 @@ CREATE TABLE Candidate_List
 	Candidate_SSN	CHAR(10)		NOT NULL,
 	Vote_ID			INT				NOT NULL,
 	UNIQUE (Candidate_SSn, Vote_ID),
-	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate(SSN),
+	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate(SSN)
+		ON DELETE CASCADE,
 	FOREIGN KEY (Vote_ID) REFERENCES Vote(ID)
+		ON DELETE CASCADE
 );
 
--- add a trigger to check only one of is_frist_rd and is_second_rd, are set true.
+-- add a check to check only one of is_frist_rd and is_second_rd, are set true.
 CREATE TABLE Vote
 (
 	ID				INT					PRIMARY KEY,
@@ -24,8 +26,11 @@ CREATE TABLE Vote
 	is_Fist_RD		BIT					NOT NULL,
 	is_Second_RD	BIT					NOT NULL,
 	UNIQUE (Voter_SSN, PS_ID), -- check if it is necessary to contain ID or not.
-	FOREIGN KEY (Voter_SSN) REFERENCES Candidate(SSN),
+	FOREIGN KEY (Voter_SSN) REFERENCES Candidate(SSN)
+		ON DELETE CASCADE,
 	FOREIGN KEY (PS_ID) REFERENCES Polling_Station(ID)
+		ON DELETE CASCADE
+
 );
 
 -- deleted city_village attribute. because it can be inside Address.
@@ -37,7 +42,8 @@ CREATE TABLE Polling_Station
 	[Address]			VARCHAR(max)		NOT NULL,
 	F_Votes_no			INT,
 	S_Votes_no			INT,
-	FOREIGN KEY (C_Name) REFERENCES Constituency(C_Name),
+	FOREIGN KEY (C_Name) REFERENCES Constituency(C_Name)
+		ON DELETE CASCADE
 );
 
 -- Just one of the has_f_Rd_vote and has_s_rd_vote shold be set as true.
@@ -71,6 +77,7 @@ CREATE TABLE Candidate
 	Political_Faction	VARCHAR(50)			NOT NULL,
 	Resume_Desc			VARCHAR(max)		NOT NULL,
 	FOREIGN KEY (C_Name) REFERENCES Constituency (C_Name)
+		ON DELETE CASCADE
 );
 
 CREATE TABLE Degree
@@ -80,6 +87,7 @@ CREATE TABLE Degree
 	Candidate_SSN		CHAR(10)			NOT NULL,
 	UNIQUE(Degree_Name, Candidate_SSN),
 	FOREIGN KEY (Candidate_SSN) REFERENCES Candidate (SSN)
+		ON DELETE CASCADE
 );
 
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Polling_station table.
@@ -92,6 +100,7 @@ CREATE TABLE Constituency
 	S_Votes_no			INT					DEFAULT(0),
 	Elected_no			INT					NOT NULL,
 	FOREIGN KEY (Province_Name) REFERENCES Province(Province_Name)
+		ON DELETE CASCADE
 );
 
 -- F_Votes_no and S_votes_no, should be evalued using trigger on Constituency table.
