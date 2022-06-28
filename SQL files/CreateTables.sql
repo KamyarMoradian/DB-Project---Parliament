@@ -10,6 +10,12 @@ GO
 IF OBJECT_ID('tr_DeleteCandidateList_OnDeleteCandidate') IS NOT NULL
 	DROP TRIGGER dbo.tr_DeleteCandidateList_OnDeleteCandidate;
 GO
+IF OBJECT_ID('tr_AddQuittedCandidate_OnDeleteCandidate') IS NOT NULL
+	DROP TRIGGER dbo.tr_AddQuittedCandidate_OnDeleteCandidate;
+GO
+IF OBJECT_ID('tr_AddVoidedPollingStation_OnDeletePollingStation') IS NOT NULL
+	DROP TRIGGER dbo.tr_AddVoidedPollingStation_OnDeletePollingStation;
+GO
 IF OBJECT_ID('Candidate_List') IS NOT NULL
 	DROP TABLE Candidate_List;
 GO
@@ -34,11 +40,11 @@ GO
 IF OBJECT_ID('Province') IS NOT NULL
 	DROP TABLE Province;
 GO
-IF OBJECT_ID('Deleted_Candidates') IS NOT NULL
-	DROP TABLE Deleted_Candidates;
+IF OBJECT_ID('Quitted_Candidate') IS NOT NULL
+	DROP TABLE Quitted_Candidate;
 GO
-IF OBJECT_ID('Deleted_PollingStations') IS NOT NULL
-	DROP TABLE Deleted_PollingStations;
+IF OBJECT_ID('Voided_PollingStation') IS NOT NULL
+	DROP TABLE Voided_PollingStation;
 GO
 
 
@@ -202,7 +208,7 @@ CREATE TABLE Candidate_List
 );
 GO
 
-CREATE TABLE Deleted_Candidates
+CREATE TABLE Quitted_Candidate
 (
 	ID						INT						PRIMARY KEY,
 	SSN						CHAR(10)				NOT NULL,
@@ -218,18 +224,14 @@ CREATE TABLE Deleted_Candidates
 	F_Votes_no				INT						DEFAULT(0),
 	S_votes_no				INT						DEFAULT(0),
 	Political_Faction		VARCHAR(50)				NOT NULL,
-	Resume_Desc				VARCHAR(max)			NOT NULL,
-	Delete_Reason			CHAR(4)					NOT NULL,
-	CONSTRAINT ck_C_DeleteReason CHECK (Delete_Reason IN ('QUAL', 'QUIT'))
+	Resume_Desc				VARCHAR(max)			NOT NULL
 );
 
-CREATE TABLE Deleted_PollingStations
+CREATE TABLE Voided_PollingStation
 (
 	ID						INT						PRIMARY KEY,
 	CO_ID					INT						NOT NULL,
 	[Address]				VARCHAR(max)			NOT NULL,
 	F_Votes_no				INT,
-	S_Votes_no				INT,
-	Delete_Reason			CHAR(4)					NOT NULL,
-	CONSTRAINT ck_PS_DeleteReason CHECK (Delete_Reason IN ('QUAL', 'QUIT'))
+	S_Votes_no				INT
 );
