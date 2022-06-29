@@ -1,6 +1,9 @@
 USE Parlimant
 GO
 
+IF OBJECT_ID('trg_ReduceVotes_OnCandidateDelete') IS NOT NULL
+	DROP TRIGGER dbo.trg_ReduceVotes_OnCandidateDelete;
+GO
 IF OBJECT_ID('trg_AddVoteToProvince_OnConstituencyUpdate') IS NOT NULL
 	DROP TRIGGER dbo.trg_AddVoteToProvince_OnConstituencyUpdate;
 GO
