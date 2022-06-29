@@ -23,13 +23,13 @@ BEGIN
 	IF (UPDATE(F_votes_no))
 		BEGIN
 			UPDATE Constituency
-			SET F_Votes_no = F_Votes_no + 1
+			SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
 			WHERE Constituency.ID = @id
 		END
 	ELSE IF (UPDATE(S_votes_no))
 		BEGIN
 			UPDATE Constituency
-			SET S_Votes_no = S_Votes_no + 1
+			SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
 			WHERE Constituency.ID = @id
 		END
 END

@@ -22,11 +22,11 @@ BEGIN
 
     IF (SELECT TOP 1 V.is_First_RD FROM inserted AS I JOIN Vote AS V ON V.ID = I.Vote_ID) = 1
 		UPDATE Candidate
-		SET F_Votes_no = F_Votes_no + 1
+		SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
 		WHERE Candidate.ID = @id
 	ELSE
 		UPDATE Candidate
-		SET S_votes_no = S_votes_no + 1
+		SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
 		WHERE Candidate.ID = @id
 END
 GO

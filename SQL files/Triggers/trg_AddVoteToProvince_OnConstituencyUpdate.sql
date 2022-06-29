@@ -23,13 +23,13 @@ BEGIN
 	IF (UPDATE(F_votes_no))
 		BEGIN
 			UPDATE Province
-			SET F_Votes_no = F_Votes_no + 1
+			SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
 			WHERE Province.ID = @id
 		END
 	ELSE IF (UPDATE(S_votes_no))
 		BEGIN
 			UPDATE Province
-			SET S_Votes_no = S_Votes_no + 1
+			SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
 			WHERE Province.ID = @id
 		END
 END

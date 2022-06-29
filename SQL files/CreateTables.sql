@@ -156,10 +156,10 @@ GO
 
 CREATE TABLE Candidate_List
 (
-	ID						INT						PRIMARY KEY			IDENTITY(1,1),
+	ID						INT						PRIMARY KEY,
 	Candidate_ID			INT						NOT NULL,
 	Vote_ID					INT						NOT NULL,
-	UNIQUE (Candidate_ID, Vote_ID),
+	UNIQUE (Candidate_ID, Vote_ID)
 );
 GO
 
@@ -194,3 +194,7 @@ CREATE TABLE Voided_PollingStation
 GO
 
 sp_settriggerorder @triggername= 'dbo.trg_ReduceVotes_OnCandidateDelete', @order='First', @stmttype = 'DELETE';  
+GO
+
+sp_settriggerorder @triggername= 'dbo.trg_ReduceVotes_OnPollingStationDelete', @order='First', @stmttype = 'DELETE';  
+GO
