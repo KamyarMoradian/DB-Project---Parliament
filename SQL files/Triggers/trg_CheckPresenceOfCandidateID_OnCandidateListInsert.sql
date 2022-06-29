@@ -24,7 +24,7 @@ BEGIN
 		 FROM Candidate AS C, inserted AS I
 		 WHERE C.ID = I.Candidate_ID ))
 			BEGIN
-				RAISERROR ( 'There is no candidate with this id = ', 1, 1)
+				RAISERROR ( 'There is no candidate with this id', 1, 1)
 			END
 END
 GO
