@@ -5,14 +5,14 @@ GO
 -- =============================================
 -- Description:	Inserting values inside QuittedCandidate after deleting it from Candidate table
 -- =============================================
-CREATE TRIGGER tr_AddQuittedCandidate_OnDeleteCandidate
+CREATE TRIGGER trg_AddQuittedCandidate_OnDeleteCandidate
    ON Candidate
    AFTER DELETE
 AS 
 BEGIN
 	SET NOCOUNT ON;
 
-    INSERT INTO QuittedCandidate
+    INSERT INTO Quitted_Candidate
 	SELECT *
 	FROM Deleted
 END

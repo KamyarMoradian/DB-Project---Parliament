@@ -8,7 +8,7 @@ GO
 -- =============================================
 -- Description:	when an instance of Candidate is deleted, all instances of CandidateList with same Canidate_SSN as SSN of Candidate, will be deleted as well.
 -- =============================================
-CREATE OR ALTER TRIGGER tr_DeleteCandidateList_OnDeleteCandidate
+CREATE OR ALTER TRIGGER trg_DeleteCandidateList_OnDeleteCandidate
    ON Candidate
    FOR DELETE
 AS 

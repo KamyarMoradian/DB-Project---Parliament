@@ -4,17 +4,32 @@
 USE Parlimant
 GO
 
-IF OBJECT_ID('tr_DeleteCandidateList_OnDeleteVote') IS NOT NULL
-	DROP TRIGGER dbo.tr_DeleteCandidateList_OnDeleteVote;
+IF OBJECT_ID('trg_AddVoteToProvince_OnConstituencyUpdate') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddVoteToProvince_OnConstituencyUpdate;
 GO
-IF OBJECT_ID('tr_DeleteCandidateList_OnDeleteCandidate') IS NOT NULL
-	DROP TRIGGER dbo.tr_DeleteCandidateList_OnDeleteCandidate;
+IF OBJECT_ID('trg_AddVoteToConstituecy_OnCandidateUpdate') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddVoteToConstituecy_OnCandidateUpdate;
 GO
-IF OBJECT_ID('tr_AddQuittedCandidate_OnDeleteCandidate') IS NOT NULL
-	DROP TRIGGER dbo.tr_AddQuittedCandidate_OnDeleteCandidate;
+IF OBJECT_ID('trg_AddVoteToPollingStation_OnCanidateListInsert') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddVoteToPollingStation_OnCanidateListInsert;
 GO
-IF OBJECT_ID('tr_AddVoidedPollingStation_OnDeletePollingStation') IS NOT NULL
-	DROP TRIGGER dbo.tr_AddVoidedPollingStation_OnDeletePollingStation;
+IF OBJECT_ID('trg_AddVoteToCandidate_OnCandidateListInsert') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddVoteToCandidate_OnCandidateListInsert;
+GO
+IF OBJECT_ID('trg_ReachedElectedNo') IS NOT NULL
+	DROP TRIGGER dbo.trg_ReachedElectedNo;
+GO
+IF OBJECT_ID('trg_DeleteCandidateList_OnDeleteVote') IS NOT NULL
+	DROP TRIGGER dbo.trg_DeleteCandidateList_OnDeleteVote;
+GO
+IF OBJECT_ID('trg_DeleteCandidateList_OnDeleteCandidate') IS NOT NULL
+	DROP TRIGGER dbo.trg_DeleteCandidateList_OnDeleteCandidate;
+GO
+IF OBJECT_ID('trg_AddQuittedCandidate_OnDeleteCandidate') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddQuittedCandidate_OnDeleteCandidate;
+GO
+IF OBJECT_ID('trg_AddVoidedPollingStation_OnDeletePollingStation') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddVoidedPollingStation_OnDeletePollingStation;
 GO
 IF OBJECT_ID('Candidate_List') IS NOT NULL
 	DROP TABLE Candidate_List;
@@ -146,11 +161,11 @@ ALTER TABLE Candidate
 GO
 
 ALTER TABLE Candidate
-	ADD CONSTRAINT ck_CandidateAge CHECK (CheckCandidateAge(Birth_Date) = 1);
+	ADD CONSTRAINT ck_CandidateAge CHECK (dbo.CheckCandidateAge(Birth_Date) = 1);
 --ALTER TABLE Candidate
 --	ADD CONSTRAINT ck_CandidateNationality CHECK (Nationality = 'Iran');
 
--- Just one of the has_f_Rd_vote and has_s_rd_vote shold be set as true. --> done
+
 -- check sex to be chosen from M and F --> done
 CREATE TABLE Voter
 (
@@ -165,11 +180,6 @@ CREATE TABLE Voter
 	CONSTRAINT ck_VoterAge CHECK (Age >= 18)
 );
 GO
-
-ALTER TABLE Voter
-	ADD CONSTRAINT ck_hasVoteRD CHECK ((Has_F_RD_Vote = 1 AND Has_S_RD_Vote = 0) OR (Has_F_RD_Vote = 0 AND Has_S_RD_Vote = 1))
-Go
-
 
 -- add a check to check only one of is_frist_rd and is_second_rd, are set true. --> done
 CREATE TABLE Vote

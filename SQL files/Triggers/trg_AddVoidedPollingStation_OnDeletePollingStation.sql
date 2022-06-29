@@ -5,14 +5,14 @@ GO
 -- =============================================
 -- Description:	Inserting values inside VoidedPollingStation after deleting it from PollingStation table
 -- =============================================
-CREATE TRIGGER tr_AddVoidedPollingStation_OnDeletePollingStation
+CREATE TRIGGER trg_AddVoidedPollingStation_OnDeletePollingStation
    ON Polling_Station
    AFTER DELETE
 AS 
 BEGIN
 	SET NOCOUNT ON;
 
-    INSERT INTO VoidedPollingStation
+    INSERT INTO Voided_PollingStation
 	SELECT *
 	FROM Deleted
 END
