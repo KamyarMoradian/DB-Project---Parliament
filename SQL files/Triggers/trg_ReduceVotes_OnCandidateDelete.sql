@@ -23,61 +23,49 @@ BEGIN
 	SELECT @sVotesNo = D.S_Votes_no
 	FROM deleted AS D
 
-	-- finding candidate id of deleted candidate
-	DECLARE @candidateID INT
-	SELECT TOP 1 @candidateID = D.ID
-	FROM deleted AS D;
+	-- Finding id of candidate, constituency and province of the candidate
+	DECLARE @CA_ID INT,
+			@CO_ID INT,
+			@P_ID INT
+
+	SELECT TOP 1 @CA_ID = D.ID, @CO_ID = CO.ID, @P_ID = CO.P_ID
+	FROM deleted AS D 
+		 JOIN Constituency AS CO ON CO.ID = D.CO_ID
+
+	-- finding number of votes for first round and second round for province
+	DECLARE @p_f_votes INT,
+			@p_s_votes INT
+	SELECT TOP 1 @p_f_votes = P.F_Votes_no - @fVotesNo, @p_s_votes = P.S_Votes_no - @sVotesNo
+	FROM Province AS P
+	WHERE P.ID = @P_ID
+
+	-- reducing number of votes from constituency and province
+	UPDATE Constituency
+	SET F_Votes_no = F_Votes_no - @fVotesNo, S_Votes_no = S_Votes_no - @sVotesNo
+	WHERE ID = @CO_ID
+
+	UPDATE Province
+	SET F_Votes_no = @p_f_votes, S_Votes_no = @p_s_votes
+	WHERE ID = @P_ID
+
+	-- deleting degrees of the deleted candidate
+	DELETE
+	FROM Degree
+	WHERE Candidate_ID = @CA_ID
 
 	-- reducing number of votes from the polling stations.
+	DECLARE @PS_table TABLE (ID INT, f_vote BIT, totalCount INT)
+
+	INSERT INTO @PS_table
+	SELECT V.PS_ID AS ID, V.is_First_RD AS f_vote, COUNT(*) AS totalCount
+	FROM Candidate_List AS CL
+		 JOIN Vote AS V ON V.ID = CL.Vote_ID
+	WHERE CL.Candidate_ID = @CA_ID
+	GROUP BY V.PS_ID, V.is_First_RD
+
 	Update Polling_Station
-	SET F_Votes_no = F_Votes_no - @fVotesNo, S_Votes_no = S_Votes_no - @sVotesNo
-	WHERE ID IN ( SELECT PS.ID
-				  FROM deleted AS D
-					   JOIN Candidate_List AS CL ON CL.Candidate_ID = D.ID
-					   JOIN Vote AS V ON V.ID = CL.Vote_ID
-					   JOIN Polling_Station AS PS ON PS.ID = V.PS_ID )
-
-	-- deleting votes have the candidate Id, which is present in deleted table
-	DELETE 
-	FROM Candidate_List
-	WHERE Candidate_ID = @candidateID;
-
-	-- finding vote instances that are not refrenced by any candidate_list instances.
-	DECLARE @emptyVotes TABLE (id INT);
-	INSERT INTO @emptyVotes
-	SELECT V.ID
-	FROM Vote AS V
-		 JOIN Candidate_List AS CL ON CL.Vote_ID = V.ID
-	GROUP BY V.ID
-	HAVING COUNT(*) = 0;
-
-	-- deleting vote instances that are not refrenced by any candidate_list instances.
-	DELETE
-	FROM Vote
-	WHERE ID IN (SELECT EV.id FROM @emptyVotes AS EV);
-
-	-- finding ids of constituencies
-	DECLARE @CO_table TABLE (id INT)
-	INSERT INTO @CO_table
-	SELECT D.CO_ID
-	FROM deleted AS D
-
-	-- reducing number of votes from Constituencies
-	Update Constituency
-	SET F_Votes_no = F_Votes_no - @fVotesNo, S_Votes_no = S_Votes_no - @sVotesNo
-	WHERE ID IN ( Select CO.id FROM @CO_table AS CO )
-
-	-- finding ids of provinces
-	DECLARE @P_table TABLE (id INT)
-	INSERT INTO @P_table
-	SELECT P.ID
-	FROM @CO_table AS CO1
-		 JOIN Constituency AS CO2 ON CO2.ID = CO1.id
-		 JOIN Province AS P ON P.ID = CO2.P_ID
-
-	-- reducing number of votes from provinces
-	Update Province
-	SET F_Votes_no = F_Votes_no - 2 * @fVotesNo, S_Votes_no = S_Votes_no - 2 * @sVotesNo
-	WHERE ID IN ( Select P.id FROM @P_table AS P )
+	SET F_Votes_no = F_Votes_no - (CASE WHEN PS1.f_vote = 1 THEN PS1.totalCount ELSE 0 END), S_Votes_no = S_Votes_no - (CASE WHEN PS1.f_vote = 0 THEN PS1.totalCount ELSE 0 END)
+	FROM Polling_Station AS PS
+		 JOIN @PS_table AS PS1 ON PS1.ID = PS.ID
 END
 GO

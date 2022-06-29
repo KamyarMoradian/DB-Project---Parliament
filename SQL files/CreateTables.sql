@@ -160,8 +160,6 @@ CREATE TABLE Candidate_List
 	Candidate_ID			INT						NOT NULL,
 	Vote_ID					INT						NOT NULL,
 	UNIQUE (Candidate_ID, Vote_ID),
-	FOREIGN KEY (Candidate_ID) REFERENCES Candidate(ID),
-	FOREIGN KEY (Vote_ID) REFERENCES Vote(ID)
 );
 GO
 
@@ -193,3 +191,6 @@ CREATE TABLE Voided_PollingStation
 	F_Votes_no				INT,
 	S_Votes_no				INT
 );
+GO
+
+sp_settriggerorder @triggername= 'dbo.trg_ReduceVotes_OnCandidateDelete', @order='First', @stmttype = 'DELETE';  
