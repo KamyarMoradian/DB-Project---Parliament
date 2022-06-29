@@ -11,33 +11,19 @@ CREATE TRIGGER trg_ReduceVotes_OnCandidateDelete
    FOR DELETE
 AS 
 BEGIN
-	SET NOCOUNT ON;
-
-	DECLARE @table TABLE
-	(
-		is_First_RD BIT, 
-		totalCount INT
-	);
+	SET NOCOUNT ON
 
 	-- finding count of votes inserted in first round or second round
-	INSERT INTO @table
-    SELECT V.is_First_RD, COUNT(*) AS totalCount
-	FROM deleted AS D
-		 JOIN Candidate_List AS CL ON CL.Candidate_ID = D.ID
-		 JOIN Vote AS V ON V.ID = CL.Vote_ID
-	GROUP BY V.is_First_RD
-
 	DECLARE @fVotesNo INT,
 			@sVotesNo INT;
 
-	SELECT @fVotesNo = T.totalCount
-	FROM @table AS T
-	WHERE T.is_First_RD = 1;
+	SELECT @fVotesNo = D.F_Votes_no
+	FROM deleted as D
 
-	SELECT @sVotesNo = T.totalCount
-	FROM @table AS T
-	WHERE T.is_First_RD = 0;
+	SELECT @sVotesNo = D.S_Votes_no
+	FROM deleted AS D
 
+	-- finding candidate id of deleted candidate
 	DECLARE @candidateID INT
 	SELECT TOP 1 @candidateID = D.ID
 	FROM deleted AS D;

@@ -42,8 +42,8 @@ CREATE TABLE Polling_Station
 	C_ID					INT						NOT NULL,
 	City					VARCHAR(50)				NOT NULL,
 	[Address]				VARCHAR(max)			NOT NULL,
-	F_Votes_no				INT,
-	S_Votes_no				INT,
+	F_Votes_no				INT						DEFAULT(0),
+	S_Votes_no				INT						DEFAULT(0),
 	FOREIGN KEY (C_ID) REFERENCES Constituency(ID)
 		ON DELETE CASCADE
 );
