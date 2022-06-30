@@ -1,6 +1,18 @@
 USE Parlimant
 GO
 
+IF OBJECT_ID('trg_PreventTransactions_OnVoidedPollingStation') IS NOT NULL
+	DROP TRIGGER dbo.trg_PreventTransactions_OnVoidedPollingStation;
+GO
+IF OBJECT_ID('trg_PreventTransactions_OnQuittedCandidate') IS NOT NULL
+	DROP TRIGGER dbo.trg_PreventTransactions_OnQuittedCandidate;
+GO
+IF OBJECT_ID('trg_CheckCandidateSSN_OnCandidateInsert') IS NOT NULL
+	DROP TRIGGER dbo.trg_CheckCandidateSSN_OnCandidateInsert;
+GO
+IF OBJECT_ID('trg_CheckEqualityOfCandidateANDPollingStation_OnCandidateListInsert') IS NOT NULL
+	DROP TRIGGER dbo.trg_CheckEqualityOfCandidateANDPollingStation_OnCandidateListInsert;
+GO
 IF OBJECT_ID('trg_CheckPresenceOfVoteID_OnCandidateListInsert') IS NOT NULL
 	DROP TRIGGER dbo.trg_CheckPresenceOfVoteID_OnCandidateListInsert;
 GO
