@@ -8,29 +8,40 @@ GO
 --				columns of constituency will be
 --				increased too.
 -- =============================================
-CREATE TRIGGER trg_AddVoteToProvince_OnConstituencyUpdate
+CREATE OR ALTER TRIGGER trg_AddVoteToProvince_OnConstituencyUpdate
    ON Constituency
    AFTER Update
 AS 
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @id INT;
-	SELECT TOP 1 @id = P.ID
-	FROM Province AS P
-		 JOIN inserted AS I ON I.P_ID = P.ID;
+	BEGIN TRY
+		DECLARE @id INT;
+		SELECT TOP 1 @id = P.ID
+		FROM Province AS P
+			 JOIN inserted AS I ON I.P_ID = P.ID;
 
-	IF (UPDATE(F_votes_no))
-		BEGIN
-			UPDATE Province
-			SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
-			WHERE Province.ID = @id
-		END
-	ELSE IF (UPDATE(S_votes_no))
-		BEGIN
-			UPDATE Province
-			SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
-			WHERE Province.ID = @id
-		END
+		IF (UPDATE(F_votes_no))
+			BEGIN
+				UPDATE Province
+				SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
+				WHERE Province.ID = @id
+			END
+		ELSE IF (UPDATE(S_votes_no))
+			BEGIN
+				UPDATE Province
+				SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
+				WHERE Province.ID = @id
+			END
+			END TRY
+	BEGIN CATCH
+		SELECT   
+			ERROR_NUMBER() AS ErrorNumber  
+			,ERROR_SEVERITY() AS ErrorSeverity  
+			,ERROR_STATE() AS ErrorState  
+			,ERROR_PROCEDURE() AS ErrorProcedure  
+			,ERROR_LINE() AS ErrorLine  
+			,ERROR_MESSAGE() AS ErrorMessage; 
+	END CATCH
 END
 GO

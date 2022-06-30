@@ -8,26 +8,37 @@ GO
 --				otherwise S_Votes_no will be increased.
 --				
 -- =============================================
-CREATE TRIGGER trg_AddVoteToPollingStation_OnCanidateListInsert
+CREATE OR ALTER TRIGGER trg_AddVoteToPollingStation_OnCanidateListInsert
    ON  Candidate_List
    AFTER INSERT
 AS 
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @id INT;
-	SELECT TOP 1 @id = P.ID
-	FROM inserted AS I
-		 JOIN Vote AS V ON V.ID = I.Vote_ID
-		 JOIN Polling_Station AS P ON P.ID = V.PS_ID
+	BEGIN TRY
+		DECLARE @id INT;
+		SELECT TOP 1 @id = P.ID
+		FROM inserted AS I
+			 JOIN Vote AS V ON V.ID = I.Vote_ID
+			 JOIN Polling_Station AS P ON P.ID = V.PS_ID
 
-    IF (SELECT TOP 1 V.is_First_RD FROM inserted AS I JOIN Vote AS V ON V.ID = I.Vote_ID) = 1
-		UPDATE Polling_Station
-		SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
-		WHERE Polling_Station.ID = @id
-	ELSE
-		UPDATE Polling_Station
-		SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
-		WHERE Polling_Station.ID = @id
+		IF (SELECT TOP 1 V.is_First_RD FROM inserted AS I JOIN Vote AS V ON V.ID = I.Vote_ID) = 1
+			UPDATE Polling_Station
+			SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
+			WHERE Polling_Station.ID = @id
+		ELSE
+			UPDATE Polling_Station
+			SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
+			WHERE Polling_Station.ID = @id
+		END TRY
+	BEGIN CATCH
+		SELECT   
+			ERROR_NUMBER() AS ErrorNumber  
+			,ERROR_SEVERITY() AS ErrorSeverity  
+			,ERROR_STATE() AS ErrorState  
+			,ERROR_PROCEDURE() AS ErrorProcedure  
+			,ERROR_LINE() AS ErrorLine  
+			,ERROR_MESSAGE() AS ErrorMessage; 
+	END CATCH
 END
 GO

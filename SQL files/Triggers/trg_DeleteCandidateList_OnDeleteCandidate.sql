@@ -15,10 +15,21 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    DELETE CL 
-	FROM Candidate_List AS CL
-	WHERE EXISTS ( SELECT *	
-				   FROM deleted
-				   WHERE deleted.ID = CL.Candidate_ID )
+	BEGIN TRY
+		DELETE CL 
+		FROM Candidate_List AS CL
+		WHERE EXISTS ( SELECT *	
+					   FROM deleted
+					   WHERE deleted.ID = CL.Candidate_ID );
+	END TRY
+	BEGIN CATCH
+		SELECT   
+			ERROR_NUMBER() AS ErrorNumber  
+			,ERROR_SEVERITY() AS ErrorSeverity  
+			,ERROR_STATE() AS ErrorState  
+			,ERROR_PROCEDURE() AS ErrorProcedure  
+			,ERROR_LINE() AS ErrorLine  
+			,ERROR_MESSAGE() AS ErrorMessage; 
+	END CATCH
 END
 GO
