@@ -30,7 +30,6 @@ CREATE TABLE Constituency
 	F_Votes_no				INT						DEFAULT(0),
 	S_Votes_no				INT						DEFAULT(0),
 	Elected_no				INT						NOT NULL,
-	UNIQUE (C_Name, Center),
 	FOREIGN KEY (P_ID) REFERENCES Province(ID)
 		ON DELETE CASCADE
 );
@@ -42,7 +41,7 @@ CREATE TABLE Polling_Station
 	ID						INT						PRIMARY KEY			IDENTITY(1,1),
 	C_ID					INT						NOT NULL,
 	City					VARCHAR(50)				NOT NULL,
-	[Address]				VARCHAR(max)			NOT NULL,
+	[Address]				VARCHAR(250)			NOT NULL,
 	F_Votes_no				INT						DEFAULT(0),
 	S_Votes_no				INT						DEFAULT(0),
 	UNIQUE (City, [Address]),
@@ -107,7 +106,8 @@ ALTER TABLE Candidate
 	ADD CONSTRAINT ck_CandidateAge CHECK (dbo.CheckCandidateAge(Birth_Date) = 1);
 --ALTER TABLE Candidate
 --	ADD CONSTRAINT ck_CandidateNationality CHECK (Nationality = 'Iran');
-
+ALTER TABLE Candidate
+	ADD CONSTRAINT ck_CandidatePFSattisfiesReligion CHECK (((Political_Faction IN ('A')) AND (Religion IN ('C', 'J', 'Z'))) OR (Political_Faction IN ('E', 'O', 'I') AND Religion IN ('I')))
 
 -- check sex to be chosen from M and F --> done
 CREATE TABLE Voter
