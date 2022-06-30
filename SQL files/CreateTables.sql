@@ -30,6 +30,7 @@ CREATE TABLE Constituency
 	F_Votes_no				INT						DEFAULT(0),
 	S_Votes_no				INT						DEFAULT(0),
 	Elected_no				INT						NOT NULL,
+	UNIQUE (C_Name, Center),
 	FOREIGN KEY (P_ID) REFERENCES Province(ID)
 		ON DELETE CASCADE
 );
@@ -44,6 +45,7 @@ CREATE TABLE Polling_Station
 	[Address]				VARCHAR(max)			NOT NULL,
 	F_Votes_no				INT						DEFAULT(0),
 	S_Votes_no				INT						DEFAULT(0),
+	UNIQUE (City, [Address]),
 	FOREIGN KEY (C_ID) REFERENCES Constituency(ID)
 		ON DELETE CASCADE
 );
