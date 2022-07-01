@@ -1,6 +1,6 @@
 --Political Faction Ranking In Each Province
 
-	SELECT Co.C_Name, C.Political_Faction, COUNT(C.Political_Faction)
+	SELECT Co.C_Name, C.Political_Faction, COUNT(C.Political_Faction) AS [COUNT]
 	FROM Candidate_List AS CL
 		INNER JOIN 
 		Candidate AS C
