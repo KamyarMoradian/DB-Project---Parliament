@@ -1,6 +1,9 @@
 USE Parlimant
 GO
 
+IF OBJECT_ID('trg_OnVoteInsert') IS NOT NULL
+	DROP TRIGGER dbo.trg_OnVoteInsert;
+GO
 IF OBJECT_ID('trg_OnCandidateListInsert') IS NOT NULL
 	DROP TRIGGER dbo.trg_OnCandidateListInsert;
 GO

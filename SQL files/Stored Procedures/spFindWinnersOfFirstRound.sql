@@ -1,4 +1,4 @@
-CREATE PROCEDURE spFindWinnersOfFirstRound
+CREATE OR ALTER PROCEDURE spFindWinnersOfFirstRound
 AS
 BEGIN
 	INSERT INTO Candidate_Won_F_RD

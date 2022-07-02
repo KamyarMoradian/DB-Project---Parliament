@@ -26,10 +26,9 @@ BEGIN
 					WHERE QC.SSN = @SSN))
 			RAISERROR('This candidate can not be added beacause a canidate with same ssn is quitted.', 1, 1);
 		ELSE
-			BEGIN
-				INSERT INTO Candidate (CO_ID, First_Name, Last_Name, is_Married, Political_Faction, Nationality, Birth_Date, Religion, Resume_Desc, Sex, SSN)
-				SELECT CO_ID, First_Name, Last_Name, is_Married, Political_Faction, Nationality, Birth_Date, Religion, Resume_Desc, Sex, SSN FROM inserted;
-			END
+			
+		INSERT INTO Candidate (CO_ID, First_Name, Last_Name, is_Married, Political_Faction, Nationality, Birth_Date, Religion, Resume_Desc, Sex, SSN)
+		SELECT CO_ID, First_Name, Last_Name, is_Married, Political_Faction, Nationality, Birth_Date, Religion, Resume_Desc, Sex, SSN FROM inserted;
 	END TRY
 	BEGIN CATCH
 		SELECT   

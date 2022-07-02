@@ -6,9 +6,9 @@ GO
 -- Description:	This trigger prevents any operation
 --				on the Quitted_Candidate table.
 -- ================================================
-CREATE TRIGGER trg_PreventTransactions_OnQuittedCandidate
+CREATE OR ALTER TRIGGER trg_PreventTransactions_OnQuittedCandidate
    ON  Quitted_Candidate
-   INSTEAD OF INSERT,DELETE,UPDATE
+   INSTEAD OF DELETE,UPDATE
 AS 
 BEGIN
 	SET NOCOUNT ON;

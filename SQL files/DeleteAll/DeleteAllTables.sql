@@ -1,6 +1,9 @@
 USE Parlimant
 GO
 
+IF OBJECT_ID('Candidate_Won_F_RD') IS NOT NULL
+	DROP TABLE Candidate_Won_F_RD;
+GO
 IF OBJECT_ID('Candidate_List') IS NOT NULL
 	DROP TABLE Candidate_List;
 GO
@@ -15,6 +18,9 @@ IF OBJECT_ID('Degree') IS NOT NULL
 GO
 IF OBJECT_ID('Candidate') IS NOT NULL
 	DROP TABLE Candidate;
+GO
+IF OBJECT_ID('Candidate_Won_F_RD') IS NOT NULL
+	DROP TABLE Candidate_Won_F_RD;
 GO
 IF OBJECT_ID('Polling_Station') IS NOT NULL
 	DROP TABLE Polling_Station;

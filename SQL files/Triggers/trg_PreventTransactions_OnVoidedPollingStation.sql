@@ -6,9 +6,9 @@ GO
 -- Description:	This trigger prevents any operation
 --				on the Voided_PollingStation table.
 -- ================================================
-CREATE TRIGGER trg_PreventTransactions_OnVoidedPollingStation
+CREATE OR ALTER TRIGGER trg_PreventTransactions_OnVoidedPollingStation
    ON  Voided_PollingStation
-   INSTEAD OF INSERT, DELETE, UPDATE
+   INSTEAD OF DELETE, UPDATE
 AS 
 BEGIN
 	SET NOCOUNT ON;
