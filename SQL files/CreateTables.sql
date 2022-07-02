@@ -109,6 +109,11 @@ ALTER TABLE Candidate
 ALTER TABLE Candidate
 	ADD CONSTRAINT ck_CandidatePFSattisfiesReligion CHECK (((Political_Faction IN ('A')) AND (Religion IN ('C', 'J', 'Z'))) OR (Political_Faction IN ('E', 'O', 'I') AND Religion IN ('I')))
 
+CREATE TABLE Candidate_Won_F_RD
+(
+	ID						INT						PRIMARY KEY
+);
+
 -- check sex to be chosen from M and F --> done
 CREATE TABLE Voter
 (
@@ -137,13 +142,18 @@ CREATE TABLE Vote
 	FOREIGN KEY (Voter_ID) REFERENCES Voter(ID)
 		ON DELETE CASCADE,
 	FOREIGN KEY (PS_ID) REFERENCES Polling_Station(ID)
-		ON DELETE CASCADE
+		ON DELETE CASCADE,
+	CONSTRAINT ck_voteRD CHECK ((is_First_RD = 1 AND is_second_RD = 0) OR (is_First_RD = 0 AND is_Second_RD = 1))
 );
 GO
 
 ALTER TABLE Vote
-	ADD CONSTRAINT ck_voteRD CHECK ((is_First_RD = 1 AND is_second_RD = 0) OR (is_First_RD = 0 AND is_Second_RD = 1))
+	ADD CONSTRAINT ck_DateOfVoteFirstRound CHECK ((is_First_RD = 1) AND (VoteDate BETWEEN '2022-07-01' AND '2022-08-01'));
 GO
+ALTER TABLE Vote
+	ADD CONSTRAINT ck_DateOfVotSecondRound CHECK ((is_Second_RD = 1) AND (VoteDate BETWEEN '2023-01-01' AND '2023-02-01'));
+GO
+
 
 CREATE TABLE Degree
 (
