@@ -8,7 +8,7 @@ GO
 -- =============================================
 CREATE OR ALTER TRIGGER trg_ReduceVotes_OnPollingStationDelete
    ON Polling_Station
-   FOR DELETE
+   AFTER DELETE
 AS  
 BEGIN
 	SET NOCOUNT ON;

@@ -10,7 +10,7 @@ GO
 -- ===================================================
 CREATE OR ALTER TRIGGER trg_CheckCandidateSSN_OnCandidateInsert
    ON  Candidate
-   INSTEAD OF Insert
+   INSTEAD OF INSERT
 AS 
 BEGIN
 	SET NOCOUNT ON;

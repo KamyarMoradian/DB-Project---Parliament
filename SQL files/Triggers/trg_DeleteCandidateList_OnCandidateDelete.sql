@@ -5,12 +5,15 @@ GO
 
 USE Parlimant
 GO
--- =============================================
--- Description:	when an instance of Candidate is deleted, all instances of CandidateList with same Canidate_SSN as SSN of Candidate, will be deleted as well.
--- =============================================
-CREATE OR ALTER TRIGGER trg_DeleteCandidateList_OnDeleteCandidate
+-- ======================================================
+-- Description:	when an instance of Candidate is deleted,
+--				all instances of CandidateList with same 
+--				Canidate_SSN as SSN of Candidate, will be
+--				deleted as well.
+-- ======================================================
+CREATE OR ALTER TRIGGER trg_DeleteCandidateList_OnCandidateDelete
    ON Candidate
-   FOR DELETE
+   AFTER DELETE
 AS 
 BEGIN
 	SET NOCOUNT ON;

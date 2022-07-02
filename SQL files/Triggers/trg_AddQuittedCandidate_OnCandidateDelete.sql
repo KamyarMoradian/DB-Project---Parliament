@@ -5,7 +5,7 @@ GO
 -- =============================================
 -- Description:	Inserting values inside QuittedCandidate after deleting it from Candidate table
 -- =============================================
-CREATE OR ALTER TRIGGER trg_AddQuittedCandidate_OnDeleteCandidate
+CREATE OR ALTER TRIGGER trg_AddQuittedCandidate_OnCandidateDelete
    ON Candidate
    AFTER DELETE
 AS 

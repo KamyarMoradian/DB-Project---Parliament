@@ -8,7 +8,7 @@ GO
 -- =============================================
 CREATE OR ALTER TRIGGER trg_ReduceVotes_OnCandidateDelete
    ON Candidate
-   FOR DELETE
+   AFTER DELETE
 AS 
 BEGIN
 	SET NOCOUNT ON

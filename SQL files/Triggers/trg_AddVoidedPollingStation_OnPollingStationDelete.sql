@@ -5,7 +5,7 @@ GO
 -- =============================================
 -- Description:	Inserting values inside VoidedPollingStation after deleting it from PollingStation table
 -- =============================================
-CREATE OR ALTER TRIGGER trg_AddVoidedPollingStation_OnDeletePollingStation
+CREATE OR ALTER TRIGGER trg_AddVoidedPollingStation_OnPollingStationDelete
    ON Polling_Station
    AFTER DELETE
 AS 

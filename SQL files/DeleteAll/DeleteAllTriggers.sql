@@ -1,6 +1,9 @@
 USE Parlimant
 GO
 
+IF OBJECT_ID('trg_OnCandidateListInsert') IS NOT NULL
+	DROP TRIGGER dbo.trg_OnCandidateListInsert;
+GO
 IF OBJECT_ID('trg_PreventTransactions_OnVoidedPollingStation') IS NOT NULL
 	DROP TRIGGER dbo.trg_PreventTransactions_OnVoidedPollingStation;
 GO
@@ -9,15 +12,6 @@ IF OBJECT_ID('trg_PreventTransactions_OnQuittedCandidate') IS NOT NULL
 GO
 IF OBJECT_ID('trg_CheckCandidateSSN_OnCandidateInsert') IS NOT NULL
 	DROP TRIGGER dbo.trg_CheckCandidateSSN_OnCandidateInsert;
-GO
-IF OBJECT_ID('trg_CheckEqualityOfCandidateANDPollingStation_OnCandidateListInsert') IS NOT NULL
-	DROP TRIGGER dbo.trg_CheckEqualityOfCandidateANDPollingStation_OnCandidateListInsert;
-GO
-IF OBJECT_ID('trg_CheckPresenceOfVoteID_OnCandidateListInsert') IS NOT NULL
-	DROP TRIGGER dbo.trg_CheckPresenceOfVoteID_OnCandidateListInsert;
-GO
-IF OBJECT_ID('trg_CheckPresenceOfCandidateID_OnCandidateListInsert') IS NOT NULL
-	DROP TRIGGER dbo.trg_CheckPresenceOfCandidateID_OnCandidateListInsert;
 GO
 IF OBJECT_ID('trg_ReduceVotes_OnPollingStationDelete') IS NOT NULL
 	DROP TRIGGER dbo.trg_ReduceVotes_OnPollingStationDelete;
@@ -31,21 +25,15 @@ GO
 IF OBJECT_ID('trg_AddVoteToConstituecy_OnCandidateUpdate') IS NOT NULL
 	DROP TRIGGER dbo.trg_AddVoteToConstituecy_OnCandidateUpdate;
 GO
-IF OBJECT_ID('trg_AddVoteToPollingStation_OnCanidateListInsert') IS NOT NULL
-	DROP TRIGGER dbo.trg_AddVoteToPollingStation_OnCanidateListInsert;
+IF OBJECT_ID('trg_DeleteCandidateList_OnVoteDelete') IS NOT NULL
+	DROP TRIGGER dbo.trg_DeleteCandidateList_OnVoteDelete;
 GO
-IF OBJECT_ID('trg_AddVoteToCandidate_OnCandidateListInsert') IS NOT NULL
-	DROP TRIGGER dbo.trg_AddVoteToCandidate_OnCandidateListInsert;
+IF OBJECT_ID('trg_DeleteCandidateList_OnCandidateDelete') IS NOT NULL
+	DROP TRIGGER dbo.trg_DeleteCandidateList_OnCandidateDelete;
 GO
-IF OBJECT_ID('trg_DeleteCandidateList_OnDeleteVote') IS NOT NULL
-	DROP TRIGGER dbo.trg_DeleteCandidateList_OnDeleteVote;
+IF OBJECT_ID('trg_AddQuittedCandidate_OnCandidateDelete') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddQuittedCandidate_OnCandidateDelete;
 GO
-IF OBJECT_ID('trg_DeleteCandidateList_OnDeleteCandidate') IS NOT NULL
-	DROP TRIGGER dbo.trg_DeleteCandidateList_OnDeleteCandidate;
-GO
-IF OBJECT_ID('trg_AddQuittedCandidate_OnDeleteCandidate') IS NOT NULL
-	DROP TRIGGER dbo.trg_AddQuittedCandidate_OnDeleteCandidate;
-GO
-IF OBJECT_ID('trg_AddVoidedPollingStation_OnDeletePollingStation') IS NOT NULL
-	DROP TRIGGER dbo.trg_AddVoidedPollingStation_OnDeletePollingStation;
+IF OBJECT_ID('trg_AddVoidedPollingStation_OnPollingStationDelete') IS NOT NULL
+	DROP TRIGGER dbo.trg_AddVoidedPollingStation_OnPollingStationDelete;
 GO
