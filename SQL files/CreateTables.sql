@@ -106,8 +106,8 @@ ALTER TABLE Candidate
 	ADD CONSTRAINT ck_CandidateAge CHECK (dbo.CheckCandidateAge(Birth_Date) = 1);
 --ALTER TABLE Candidate
 --	ADD CONSTRAINT ck_CandidateNationality CHECK (Nationality = 'Iran');
-ALTER TABLE Candidate
-	ADD CONSTRAINT ck_CandidatePFSattisfiesReligion CHECK (((Political_Faction IN ('A')) AND (Religion IN ('C', 'J', 'Z'))) OR (Political_Faction IN ('E', 'O', 'I') AND Religion IN ('I')))
+--ALTER TABLE Candidate
+--	ADD CONSTRAINT ck_CandidatePFSattisfiesReligion CHECK (((Political_Faction IN ('A')) AND (Religion IN ('C', 'J', 'Z'))) OR (Political_Faction IN ('E', 'O', 'I') AND Religion IN ('I')))
 
 CREATE TABLE Candidate_Won_F_RD
 (
@@ -121,8 +121,8 @@ CREATE TABLE Voter
 	SSN						CHAR(10)				NOT NULL			UNIQUE,
 	Sex						CHAR(1)					NOT NULL, 
 	Age						INT						NOT NULL,
-	Has_F_RD_Vote			BIT						NOT NULL,
-	Has_S_RD_Vote			BIT						NOT NULL,
+	Has_F_RD_Vote			BIT						DEFAULT(0),
+	Has_S_RD_Vote			BIT						DEFAULT(0),
 	CONSTRAINT ck_VoterSex CHECK (SEX IN ('M', 'F')),
 	CONSTRAINT ck_VoterSSN CHECK (ISNUMERIC(SSN) = 1),
 	CONSTRAINT ck_VoterAge CHECK (Age >= 18)
@@ -148,10 +148,7 @@ CREATE TABLE Vote
 GO
 
 ALTER TABLE Vote
-	ADD CONSTRAINT ck_DateOfVoteFirstRound CHECK ((is_First_RD = 1) AND (VoteDate BETWEEN '2022-07-01' AND '2022-08-01'));
-GO
-ALTER TABLE Vote
-	ADD CONSTRAINT ck_DateOfVotSecondRound CHECK ((is_Second_RD = 1) AND (VoteDate BETWEEN '2023-01-01' AND '2023-02-01'));
+	ADD CONSTRAINT ck_DateOfVote CHECK (dbo.isValidDateOfVote(is_First_RD, VoteDate) = 1);
 GO
 
 
@@ -168,7 +165,7 @@ GO
 
 CREATE TABLE Candidate_List
 (
-	ID						INT						PRIMARY KEY,
+	ID						INT						PRIMARY KEY			IDENTITY(1,1),
 	Candidate_ID			INT						NOT NULL,
 	Vote_ID					INT						NOT NULL,
 	UNIQUE (Candidate_ID, Vote_ID)
