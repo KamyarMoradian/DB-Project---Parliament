@@ -1,35 +1,32 @@
+CREATE PROC Candidate_Percentage @filter INT
+AS
+BEGIN
+	DECLARE @num1 FLOAT 
+	set @num1 = 
+		( SELECT COUNT(t1.ID)
+		  FROM (
+				SELECT Candidate.ID, Candidate.F_Votes_no + Candidate.S_votes_no AS total
+				FROM Candidate
+				WHERE  Candidate.F_Votes_no + Candidate.S_votes_no < @filter ) AS t1)
 
+	--print @num1
 
+	DECLARE @num2 FLOAT
+	SET @num2 =
+		( SELECT COUNT(t2.ID)
+		  FROM (
+				SELECT Candidate.ID, Candidate.F_Votes_no + Candidate.S_votes_no AS total
+				FROM Candidate ) AS t2)
 
-create procedure Candidate_Percentage @filter int
-as
+	--print @num2
 
-declare @num1 float
-set @num1 = 
-(select Count(t1.ID)
-from (
-select Candidate.ID, Candidate.F_Votes_no + Candidate.S_votes_no as total
-from Candidate
-where  Candidate.F_Votes_no + Candidate.S_votes_no < @filter 
-)as t1)
+	PRINT (@num1 / @num2)*100
+END
 
---print @num1
+GO
 
-declare @num2 float
-set @num2 =
-(select Count(t2.ID)
-from(
-select Candidate.ID, Candidate.F_Votes_no + Candidate.S_votes_no as total
-from Candidate
-)as t2)
-
---print @num2
-
-print (@num1 / @num2)*100
-go
-
-exec Candidate_Percentage @filter = 10
-exec Candidate_Percentage @filter = 7
-
-exec Candidate_Percentage @filter = 2000
-exec Candidate_Percentage @filter = 1000
+EXEC Candidate_Percentage @filter = 10
+EXEC Candidate_Percentage @filter = 7
+EXEC
+EXEC Candidate_Percentage @filter = 2000
+EXEC Candidate_Percentage @filter = 1000

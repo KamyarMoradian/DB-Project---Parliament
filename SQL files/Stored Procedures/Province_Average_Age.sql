@@ -1,17 +1,17 @@
-create procedure Province_AvgAge @province int
-as
-select Province.ID as Province_ID,avg(Voter.Age)AS averageAge
-from Voter
-join Vote on Voter.ID = Vote.Voter_ID
-join Polling_Station on Vote.PS_ID = Polling_Station.ID
-join Constituency on Polling_Station.C_ID = Constituency.ID
-join Province on Constituency.P_ID = Province.ID
-where Province.ID = @province
-group by Province.ID
-go
+CREATE PROC Province_AvgAge @province INT
+AS
+SELECT Province.ID AS Province_ID, AVG(Voter.Age) AS averageAge
+FROM Voter
+	 JOIN Vote ON Voter.ID = Vote.Voter_ID
+	 JOIN Polling_Station ON Vote.PS_ID = Polling_Station.ID
+	 JOIN Constituency ON Polling_Station.C_ID = Constituency.ID
+	 JOIN Province ON Constituency.P_ID = Province.ID
+WHERE Province.ID = @province
+GROUP BY Province.ID
+GO
 
 
-exec Province_AvgAge @province = 6
-exec Province_AvgAge @province = 7
-exec Province_AvgAge @province = 2
-exec Province_AvgAge @province = 9
+EXEC Province_AvgAge @province = 6
+EXEC Province_AvgAge @province = 7
+EXEC Province_AvgAge @province = 2
+EXEC Province_AvgAge @province = 9

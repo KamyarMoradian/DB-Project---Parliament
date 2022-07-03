@@ -1,10 +1,10 @@
-alter procedure VotesNumber_Certain_Candidate @Id int
-as
+ALTER PROCEDURE VotesNumber_Certain_Candidate @Id INT
+AS
 
-select Candidate.ID,Candidate.First_Name + ' ' + Candidate.Last_Name as fullName,Candidate.F_Votes_no,Candidate.S_votes_no
-from Candidate
-where Candidate.ID = @Id
-go
+SELECT Candidate.ID,Candidate.First_Name + ' ' + Candidate.Last_Name AS fullName,Candidate.F_Votes_no,Candidate.S_votes_no
+FROM Candidate
+WHERE Candidate.ID = @Id
+GO
 
-exec VotesNumber_Certain_Candidate @Id = 15;
-exec VotesNumber_Certain_Candidate @Id = 8;
+EXEC VotesNumber_Certain_Candidate @Id = 15;
+EXEC VotesNumber_Certain_Candidate @Id = 8;
