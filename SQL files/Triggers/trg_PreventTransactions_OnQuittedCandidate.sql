@@ -12,6 +12,6 @@ CREATE OR ALTER TRIGGER trg_PreventTransactions_OnQuittedCandidate
 AS 
 BEGIN
 	SET NOCOUNT ON;
-	RAISERROR('You can not make any transaction on Quitted_Candidate table.', 16, 10)
+	RAISERROR('You can not make any transaction on Quitted_Candidate table.', 16, 10);
 END
 GO

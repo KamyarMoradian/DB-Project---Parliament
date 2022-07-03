@@ -45,6 +45,7 @@ BEGIN
 			WHERE V.ID = I.Vote_ID ))
 			BEGIN
 				RAISERROR ( 'There is no vote with this id', 1, 1);
+				ROLLBACK TRANSACTION;
 				SET @flag = 1;
 			END
 
@@ -59,6 +60,7 @@ BEGIN
 			WHERE C.ID = I.Candidate_ID ))
 			BEGIN
 				RAISERROR ( 'There is no candidate with this id', 1, 1);
+				ROLLBACK TRANSACTION;
 				SET @flag = 1;
 			END
 
@@ -74,14 +76,14 @@ BEGIN
 			JOIN Vote AS V ON V.ID = I.Vote_ID
 
 	IF (@is_second_rd = 1 AND NOT EXISTS ( SELECT * 
-											FROM Candidate_List AS CA
-												JOIN Candidate_Won_F_RD AS CAW ON CAW.ID = CA.Candidate_ID ))
+											FROM inserted AS I
+												JOIN Candidate_Won_F_RD AS CAW ON CAW.ID = I.Candidate_ID ))
 			BEGIN
 				RAISERROR ( 'There is no candidate with such id in the Candidate_Won_F_RD table.', 1, 1);
+				ROLLBACK TRANSACTION;
 				SET @flag = 1;
 			END
 
-		
 	-- ===================================================================================================================================================================
 
 	-- inserting data into the the Candidate_List table.

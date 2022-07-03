@@ -26,11 +26,13 @@ BEGIN
 	IF (@f_rd_vote = 1 AND EXISTS ( SELECT * FROM Candidate_Won_F_RD))
 		BEGIN
 			RAISERROR ('Vote for first round can not be inserted, since voting for second round is started.', 1, 1);
+			ROLLBACK TRANSACTION;
 			SET @flag = 1;
 		END
 	ELSE IF (@f_rd_vote = 0 AND NOT EXISTS ( SELECT * FROM Candidate_Won_F_RD ))
 		BEGIN
 			RAISERROR ('Vote for second round can not be inserted, since voting for second round is not started yet.', 1, 1);
+			ROLLBACK TRANSACTION;
 			SET @flag = 1;
 		END
 
