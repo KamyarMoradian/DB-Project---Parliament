@@ -18,6 +18,8 @@ BEGIN
 	DECLARE @f_rd_vote BIT,
 			@flag BIT;
 
+	SET @flag = 0;
+
 	SELECT @f_rd_vote = I.is_First_RD
 	FROM inserted AS I
 	
@@ -31,16 +33,6 @@ BEGIN
 			RAISERROR ('Vote for second round can not be inserted, since voting for second round is not started yet.', 1, 1);
 			SET @flag = 1;
 		END
-
-	-- ==========================================================================================================================
-		
-	-- Description:	To set the BIT value of Has_F_RD_Vote and Has_S_RD_Vote of Voter instance,
-	--				to whom this instance of vote belongs to.
-
-	UPDATE Voter
-	SET Has_F_RD_Vote = (CASE WHEN I.is_First_RD = 1 THEN 1 END), Has_S_RD_Vote = (CASE WHEN I.is_Second_RD = 1 THEN 1 END)
-	FROM inserted AS I
-			JOIN Voter AS V ON V.ID = I.Voter_ID
 
 	-- ==========================================================================================================================
 

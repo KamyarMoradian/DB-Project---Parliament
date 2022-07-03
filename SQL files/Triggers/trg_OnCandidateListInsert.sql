@@ -10,7 +10,9 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	BEGIN TRY
 	DECLARE @flag BIT;
+	SET @flag = 0;
 	-- ===================================================================================================================================================================
 		
 	-- Description: Checks equality of Constituency of canidate and the polling station,
@@ -62,48 +64,6 @@ BEGIN
 
 	-- ===================================================================================================================================================================
 
-	-- Description:	when a vote is inserted one vote will be added to polling station.
-	--				if the vote is for the first round, F_Votes_no will be increased.
-	--				otherwise S_Votes_no will be increased.
-
-	DECLARE @ps_id INT;
-	SELECT TOP 1 @ps_id = P.ID
-	FROM inserted AS I
-			JOIN Vote AS V ON V.ID = I.Vote_ID
-			JOIN Polling_Station AS P ON P.ID = V.PS_ID
-
-	IF (SELECT TOP 1 V.is_First_RD FROM inserted AS I JOIN Vote AS V ON V.ID = I.Vote_ID) = 1
-		UPDATE Polling_Station
-		SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
-		WHERE Polling_Station.ID = @ps_id
-	ELSE
-		UPDATE Polling_Station
-		SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
-		WHERE Polling_Station.ID = @ps_id
-
-	-- ===================================================================================================================================================================
-
-	-- Description:	when a candidate is observed in the candidate_List instance,
-	--				one vote will be added to the candidate. if the vote is for
-	--				for the first round, F_Votes_no will be increased. otherwise
-	--				S_Votes_no will be increased.
-
-	DECLARE @ca_id INT;
-	SELECT TOP 1 @ca_id = C.ID
-	FROM Candidate AS C
-			JOIN inserted AS I ON C.ID = I.Candidate_ID;
-
-	IF (SELECT TOP 1 V.is_First_RD FROM inserted AS I JOIN Vote AS V ON V.ID = I.Vote_ID) = 1
-		UPDATE Candidate
-		SET F_Votes_no = ISNULL(F_Votes_no, 0) + 1
-		WHERE Candidate.ID = @ca_id
-	ELSE
-		UPDATE Candidate
-		SET S_Votes_no = ISNULL(S_Votes_no, 0) + 1
-		WHERE Candidate.ID = @ca_id
-
-	-- ===================================================================================================================================================================
-
 	-- Description:	if the S_RD_Vote is set 1, the candidate the voting is for, should 
 	--				be in the Candidate_F_RD_Winners table.
 
@@ -114,8 +74,8 @@ BEGIN
 			JOIN Vote AS V ON V.ID = I.Vote_ID
 
 	IF (@is_second_rd = 1 AND NOT EXISTS ( SELECT * 
-											FROM inserted AS I 
-												JOIN Candidate_Won_F_RD AS CAW ON CAW.ID = I.Candidate_ID ))
+											FROM Candidate_List AS CA
+												JOIN Candidate_Won_F_RD AS CAW ON CAW.ID = CA.Candidate_ID ))
 			BEGIN
 				RAISERROR ( 'There is no candidate with such id in the Candidate_Won_F_RD table.', 1, 1);
 				SET @flag = 1;
@@ -128,8 +88,17 @@ BEGIN
 
 	IF (@flag <> 1)
 		INSERT INTO Candidate_List
-		SELECT *
-		FROM inserted
-
+		SELECT I.Candidate_ID, I.Vote_ID
+		FROM inserted AS I
+	END TRY
+	BEGIN CATCH
+		SELECT   
+			ERROR_NUMBER() AS ErrorNumber  
+			,ERROR_SEVERITY() AS ErrorSeverity  
+			,ERROR_STATE() AS ErrorState  
+			,ERROR_PROCEDURE() AS ErrorProcedure  
+			,ERROR_LINE() AS ErrorLine  
+			,ERROR_MESSAGE() AS ErrorMessage; 
+	END CATCH
 END
 GO
