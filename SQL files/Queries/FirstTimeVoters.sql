@@ -6,7 +6,7 @@ FROM Voter
 	WHERE Age < 22
 
 -- In Province
-SELECT P.Province_Name , COUNT(*) AS COUNT
+SELECT P.Province_Name AS [Province Name], COUNT(*) AS [Count]
 FROM Vote AS V 
 	INNER JOIN
 	Voter AS VO ON V.ID = VO.ID 
@@ -23,7 +23,7 @@ FROM Vote AS V
 	GROUP BY P.Province_Name
 
 -- In Constituency
-SELECT C.C_Name , COUNT(*) AS COUNT
+SELECT C.C_Name AS [Constituency Name] , COUNT(*) AS [Count]
 FROM Vote AS V 
 	INNER JOIN 
 	Voter AS VO

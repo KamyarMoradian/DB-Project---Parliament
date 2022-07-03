@@ -1,6 +1,6 @@
 --Political Faction Ranking In Each Province
 
-SELECT Co.C_Name, (CASE WHEN C.Political_Faction = 'E' THEN 'Eslah Talab'
+SELECT Co.C_Name AS [Constituency Name], (CASE WHEN C.Political_Faction = 'E' THEN 'Eslah Talab'
 		   WHEN C.Political_Faction = 'O' THEN 'Osoul Gara' 
 		   WHEN C.Political_Faction = 'A' THEN 'Aghaliat Dini'
 		   WHEN C.Political_Faction = 'I' THEN 'Indepenant' END) AS [Political Faction],
