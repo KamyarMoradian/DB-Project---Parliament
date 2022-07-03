@@ -48,8 +48,4 @@ BEGIN
 	END
 END
 
-
-
-
-
-
+EXEC CandidateInConstituency @CO_ID = 1, @Base = 'Gender'

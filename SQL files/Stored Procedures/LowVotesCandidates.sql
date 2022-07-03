@@ -16,5 +16,4 @@ BEGIN
 	FROM Candidate 
 		HAVING (F_Votes_no + S_votes_no) < @count
 		ORDER BY (F_Votes_no + S_votes_no) DESC
-
 END

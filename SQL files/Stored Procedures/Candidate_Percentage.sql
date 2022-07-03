@@ -26,7 +26,7 @@ END
 GO
 
 EXEC Candidate_Percentage @filter = 10
-EXEC Candidate_Percentage @filter = 7
-EXEC
-EXEC Candidate_Percentage @filter = 2000
-EXEC Candidate_Percentage @filter = 1000
+EXEC Candidate_Percentage @filter = 5
+EXEC Candidate_Percentage @filter = 48
+EXEC Candidate_Percentage @filter = 50
+EXEC Candidate_Percentage @filter = 100
